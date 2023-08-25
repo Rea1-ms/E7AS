@@ -1,0 +1,19 @@
+[
+    {
+        "num": "1(这是序号  使用前请将括号及括号内容去掉,否则将无法正常运行)",
+        "nickname": "(这里填写备注名,下面填的是开始账号前的预热时间)",
+        "waiting_before_launch": 0,
+        "IP": "ex:127.0.0.1:5555",
+        "application": "google(上面填模拟器的adb调试ip,此处若为play版填google即可，其他版本的未收录，请提issue添加)",
+        "bookmark_time": "刷书签次数，默认0"
+    },    
+    {
+        "num": "2",
+        "nickname": "(若有多账号(作者暂未测试)依次复制模板向下填写,记得带上逗号,遇到问题请学习JSON基础语法)",
+        "waiting_before_launch": 60,
+        "IP": "",
+        "application": "",
+        "bookmark_time":"0"
+    }    
+
+]
