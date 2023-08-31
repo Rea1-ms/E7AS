@@ -223,7 +223,7 @@ def update():
 def daily():   
     global ready_to_send
     ready_to_send += '----------开始每日奖励收取----------\n'                           
-    loop('ads',0.8,5)
+    loop('ads',0.9,5)
     loop('confirm_blue',0.8,15)
     sleep_with_random(5)
     loop('tap_to_close_yellow',0.8,8)
@@ -774,7 +774,7 @@ def activity():
     loop('menu_launch',0.8,2)
     loop('acvitity_launch',0.95,5)
     if application=='google':
-        x,y=match('activity_regular',0.95,True)                   #一般来说活动4个按钮
+        x,y=match('activity_regular',0.95,True)                   #一般来说活动4个按钮 这期摆了
         device.shell('input tap '+str(x)+' '+str(y+70))
         sleep_with_random(30)  
         for i in range(4):
@@ -782,9 +782,9 @@ def activity():
             sleep_with_random(5)
             device.shell('input tap 655 645')
             sleep_with_random(2)
-        
-        x,y=match('activity_regular',0.8,True)  
-        device.shell('input tap '+str(x)+' '+str(y+150))                 #本期为光兰蒂
+        '''
+        x,y=match('activity_regular',0.8,True)                          
+        device.shell('input tap '+str(x)+' '+str(y+150))                 #上期为光兰蒂，本期懒得做
         sleep_with_random(30)  
         for i in range(4):
             device.shell('input tap 575 595')
@@ -795,7 +795,7 @@ def activity():
         sleep_with_random(5)
         device.shell('input tap 655 645')
         sleep_with_random(2) 
-
+        '''
 
     elif application=='china':
         while not match('activity_regular',0.8,True) :
@@ -803,7 +803,39 @@ def activity():
             swipe(1300,700,1300,100,3)
         x,y=match('activity_regular',0.8,True)                   #一般来说活动4个按钮
         device.shell('input tap '+str(x)+' '+str(y+95))
-        sleep_with_random(10)  
+        sleep_with_random(10) 
+
+        for i in range(4):
+            device.shell(f'input tap {395+i*240} 575')
+            sleep_with_random(5)
+            device.shell('input tap 640 635')
+            sleep_with_random(2)
+
+        device.shell('input tap '+str(x)+' '+str(y+95))
+        sleep_with_random(10) 
+        for i in range(4):
+            device.shell('input tap 545 545')
+            sleep_with_random(8)
+            device.shell('input tap 640 635')
+            sleep_with_random(2)    
+        device.shell('input tap 1015 660')   
+        sleep_with_random(5)
+        device.shell('input tap 640 635')
+        sleep_with_random(2) 
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        ''' 
         for i in range(5):
             device.shell('input tap 1045 525')
             sleep_with_random(5)
@@ -824,7 +856,7 @@ def activity():
             sleep_with_random(5)
             device.shell('input tap 635 660')
             sleep_with_random(2)
-
+        '''
 
     rt(2)
     ready_to_send += '**********活动奖励收取完成**********\n'
@@ -835,7 +867,7 @@ def dttb():
     ready_to_send += '----------排除妨碍中----------\n'
     sleep_with_random(10)
     loop('tap_to_close_yellow',0.8,8)
-    loop('ads',0.8,5)
+    loop('ads',0.9,5)
     loop('dispatch_restart',0.8,8)
     loop('tap_to_close_white',0.8,8)
     loop('tap_to_close_yellow',0.8,8)
