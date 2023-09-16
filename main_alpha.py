@@ -283,9 +283,8 @@ def videos():
         if not match('activity_all_blue',0.99,True):
             match('activity_all_grey',0.99,False)
             sleep_with_random(3)
-        swipe(800,700,800,200,2)
-        swipe(800,700,800,200,2)
-        swipe(800,700,800,200,5)
+        while not match('video',0.8,True):
+            swipe(800,700,800,200,5)
         sleep_with_random(5)
         while True:
             if match('video',0.8,True):
@@ -782,25 +781,28 @@ def activity():
             sleep_with_random(5)
             device.shell('input tap 655 645')
             sleep_with_random(2)
-        '''
+        
         x,y=match('activity_regular',0.8,True)                          
-        device.shell('input tap '+str(x)+' '+str(y+150))                 #上期为光兰蒂，本期懒得做
+        device.shell('input tap '+str(x)+' '+str(y+150))                 #8.14:4+1 光兰蒂;     9.1:8+1 伊杰拉建国礼(懒得做)        9.15:4+1 吸血鬼
         sleep_with_random(30)  
         for i in range(4):
-            device.shell('input tap 575 595')
+            device.shell('input tap 450 545')
             sleep_with_random(8)
             device.shell('input tap 655 645')
             sleep_with_random(2)    
-        device.shell('input tap 1015 700')   
+        device.shell('input tap 975 700')   
         sleep_with_random(5)
         device.shell('input tap 655 645')
         sleep_with_random(2) 
-        '''
+        
 
     elif application=='china':
-        while not match('activity_regular',0.8,True) :
-            swipe(1300,700,1300,100,3)
-            swipe(1300,700,1300,100,3)
+        while True:
+            if not match('activity_regular',0.8,True) :
+                swipe(1300,700,1300,100,3)
+                swipe(1300,700,1300,100,3)
+            else:
+                break
         x,y=match('activity_regular',0.8,True)                   #一般来说活动4个按钮
         device.shell('input tap '+str(x)+' '+str(y+95))
         sleep_with_random(10) 
@@ -811,7 +813,7 @@ def activity():
             device.shell('input tap 640 635')
             sleep_with_random(2)
 
-        device.shell('input tap '+str(x)+' '+str(y+95))
+        device.shell('input tap '+str(x)+' '+str(y+190))
         sleep_with_random(10) 
         for i in range(4):
             device.shell('input tap 545 545')
@@ -843,7 +845,7 @@ def activity():
             sleep_with_random(2)
 
 
-        device.shell('input tap 915 450')                #本期为夏日超级大作战活动，有每日/周任务  
+        device.shell('input tap 915 450')                #8.14:夏日超级大作战活动，有每日/周任务  9.1:光兰蒂        
         sleep_with_random(30) 
         for i in range(5):
             device.shell('input tap 1045 525')
@@ -879,7 +881,7 @@ def dttb():
 def community():    
     if application=='china':
         loop('menu_launch',0.8,2)
-        loop('acvitity_launch',0.9,7)
+        loop('acvitity_launch',0.9,10)
         loop('game_community_launch',0.8,7)
         loop('game_community_checkin',0.8,7)
         loop('game_community_checkin_done',0.8,2)
@@ -1018,8 +1020,8 @@ try:
                     match('update',0.9,False)
                     print('发现并执行游戏更新！')
                 if application=='china':
-                    if match('launch_activity_close',0.8,True):
-                        match('launch_activity_close',0.8,False)
+                    if match('launch_activity_close',0.7,True):
+                        match('launch_activity_close',0.7,False)
                 elif application=='google':
                     if match('app_update',0.9,True):
                         log('发现游戏更新')
@@ -1042,6 +1044,7 @@ try:
             Customization()
             #match('mystery',0.9,True)
             #loop('knight_stone',0.97,5) 
+            #community()
         except Exception as e:
             # 发生异常时记录日志
             print(f'运行账号{account_num}时程序运行异常：{e}')
