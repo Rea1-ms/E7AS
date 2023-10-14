@@ -204,6 +204,16 @@ def update():
     else:
         raise Exception("程序更新失败！")
 
+def restart():
+        device.shell(f'am force-stop {package_name}')
+            #防止上一次运行异常影响本次运行
+        sleep_with_random(5)
+            #任务走菜单是为了识别精准（除圣域），防止因背景不一样而报错
+        device.shell(f'am start -n {package_name}/kr.supercreative.epic7.AppActivity')
+            #停止：adb shell am force-stop com.stove.epic7.google
+        sleep_with_random(20)
+
+
 
 
 
@@ -783,10 +793,10 @@ def activity():
             sleep_with_random(2)
         
         x,y=match('activity_regular',0.8,True)                          
-        device.shell('input tap '+str(x)+' '+str(y+150))                 #8.14:4+1 光兰蒂;     9.1:8+1 伊杰拉建国礼(懒得做)        9.15:4+1 吸血鬼
+        device.shell('input tap '+str(x)+' '+str(y+150))                 #8.14:4+1 光兰蒂;     9.1:8+1 伊杰拉建国礼(懒得做)        9.15:4+1 吸血鬼   10.6猜拳
         sleep_with_random(30)  
         for i in range(4):
-            device.shell('input tap 450 545')
+            device.shell('input tap 465 660')
             sleep_with_random(8)
             device.shell('input tap 655 645')
             sleep_with_random(2)    
@@ -813,14 +823,14 @@ def activity():
             device.shell('input tap 640 635')
             sleep_with_random(2)
 
-        device.shell('input tap '+str(x)+' '+str(y+190))
+        device.shell('input tap '+str(x)+' '+str(y+190))        #本期为吸血鬼转盘
         sleep_with_random(10) 
         for i in range(4):
-            device.shell('input tap 545 545')
+            device.shell('input tap 390 535')
             sleep_with_random(8)
             device.shell('input tap 640 635')
             sleep_with_random(2)    
-        device.shell('input tap 1015 660')   
+        device.shell('input tap 900 705')   
         sleep_with_random(5)
         device.shell('input tap 640 635')
         sleep_with_random(2) 
@@ -838,6 +848,7 @@ def activity():
 
 
         ''' 
+        #超级大作战（国）
         for i in range(5):
             device.shell('input tap 1045 525')
             sleep_with_random(5)
@@ -858,6 +869,49 @@ def activity():
             sleep_with_random(5)
             device.shell('input tap 635 660')
             sleep_with_random(2)
+
+        #光兰蒂（国）
+        device.shell('input tap '+str(x)+' '+str(y+190))
+        sleep_with_random(10) 
+        for i in range(4):
+            device.shell('input tap 545 545')
+            sleep_with_random(8)
+            device.shell('input tap 640 635')
+            sleep_with_random(2)    
+        device.shell('input tap 1015 660')   
+        sleep_with_random(5)
+        device.shell('input tap 640 635')
+        sleep_with_random(2) 
+
+
+
+        #大转盘（外） 9.15 吸血鬼
+        x,y=match('activity_regular',0.8,True)                          
+        device.shell('input tap '+str(x)+' '+str(y+150))                 
+        sleep_with_random(30)  
+        for i in range(4):
+            device.shell('input tap 450 545')
+            sleep_with_random(8)
+            device.shell('input tap 655 645')
+            sleep_with_random(2)    
+        device.shell('input tap 975 700')   
+        sleep_with_random(5)
+        device.shell('input tap 655 645')
+        sleep_with_random(2) 
+
+        #10.6猜拳(外) 雅卡泰丝
+        x,y=match('activity_regular',0.8,True)                          
+        device.shell('input tap '+str(x)+' '+str(y+150))                 
+        sleep_with_random(30)  
+        for i in range(4):
+            device.shell('input tap 465 660')
+            sleep_with_random(8)
+            device.shell('input tap 655 645')
+            sleep_with_random(2)    
+        device.shell('input tap 975 700')   
+        sleep_with_random(5)
+        device.shell('input tap 655 645')
+        sleep_with_random(2) 
         '''
 
     rt(2)
@@ -1003,18 +1057,15 @@ try:
 
         
         try:
-            device.shell(f'am force-stop {package_name}')
-            #防止上一次运行异常影响本次运行
-            sleep_with_random(5)
-            #任务走菜单是为了识别精准（除圣域），防止因背景不一样而报错
-            device.shell(f'am start -n {package_name}/kr.supercreative.epic7.AppActivity')
-            #停止：adb shell am force-stop com.stove.epic7.google
-            sleep_with_random(20)
+            restart()
+            while not (match('maintain',0.8,True) or match('YUNA',0.95,True)):
+                restart()
             if match('maintain',0.8,True):
                 log('====================维护中====================')
                 ready_to_send+='====================维护中====================\n'
                 end()
                 continue
+
             while match('YUNA',0.95,True):
                 if match('update',0.9,True):
                     match('update',0.9,False)
