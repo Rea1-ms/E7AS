@@ -205,13 +205,19 @@ def update():
         raise Exception("程序更新失败！")
 
 def restart():
+        global application
+
         device.shell(f'am force-stop {package_name}')
-            #防止上一次运行异常影响本次运行
+        #防止上一次运行异常影响本次运行
         sleep_with_random(5)
-            #任务走菜单是为了识别精准（除圣域），防止因背景不一样而报错
-        device.shell(f'am start -n {package_name}/kr.supercreative.epic7.AppActivity')
-            #停止：adb shell am force-stop com.stove.epic7.google
+        #任务走菜单是为了识别精准（除圣域），防止因背景不一样而报错
+        if application=='google':
+            device.shell(f'am start -n {package_name}/kr.supercreative.epic7.AppActivity')
+                #停止：adb shell am force-stop com.stove.epic7.google
+        else :
+            match('app_icon',0.9,False)
         sleep_with_random(20)
+        
 
 
 
@@ -244,6 +250,9 @@ def daily():
     loop('dispatch_restart',0.8,8)
     loop('tap_to_close_yellow',0.8,8)
     loop('tap_to_close_white',0.8,8)
+    match('announcement',0.8,False)
+    sleep_with_random(2)
+    loop('confirm_blue',0.8,2)
     loop('buying_close',0.8,8)
     loop('gift_from_pets',0.8,8)
     device.shell('input tap 525 715')
@@ -926,6 +935,9 @@ def dttb():
     loop('ads',0.9,5)
     loop('dispatch_restart',0.8,8)
     loop('tap_to_close_white',0.8,8)
+    match('announcement',0.8,False)
+    sleep_with_random(2)
+    loop('confirm_blue',0.8,2)
     loop('tap_to_close_yellow',0.8,8)
     loop('buying_close',0.8,8)
     ready_to_send += '**********妨碍已排除**********\n'
@@ -1060,6 +1072,7 @@ try:
             restart()
             while not (match('maintain',0.8,True) or match('YUNA',0.95,True)):
                 restart()
+                sleep_with_random(2)
             if match('maintain',0.8,True):
                 log('====================维护中====================')
                 ready_to_send+='====================维护中====================\n'
@@ -1070,9 +1083,11 @@ try:
                 if match('update',0.9,True):
                     match('update',0.9,False)
                     print('发现并执行游戏更新！')
+                    sleep_with_random(2)
                 if application=='china':
                     if match('launch_activity_close',0.7,True):
                         match('launch_activity_close',0.7,False)
+                        sleep_with_random(2)
                 elif application=='google':
                     if match('app_update',0.9,True):
                         log('发现游戏更新')
