@@ -48,8 +48,8 @@ def Customization():
         pvp()           #白天要肝要上分就注释掉
         dttb()
 
-        #crusade()       #上线清体力,建议保留
-        #dttb()
+        crusade()       #上线清体力,建议保留
+        dttb()
         
         if match('merchant_launch',0.8,True):
             loop('merchant_launch',0.8,3)
@@ -57,14 +57,14 @@ def Customization():
             rt(3)
         dttb()
 
-        #mail()           #领邮件，想要体力攒着周末刷就注释掉
+        mail()           #领邮件，想要体力攒着周末刷就注释掉
 
         end()
 
     elif 23<=hour<=24:
 
-        #dttb()   
-        #mail()
+        dttb()   
+        mail()
 
         dttb()
         pvp()
@@ -95,7 +95,7 @@ def sleep_with_random(a):
 
 #主要匹配模块
 def match(filename,threshold,f):       
-    global res_path       
+    global res_path,retry_times       
     filename+='.png'
     if time.time()  - ttt > 7200 :
         log('运行超时，开始下一个账号.')
@@ -121,9 +121,15 @@ def match(filename,threshold,f):
         locations_fld = np.where(result_fld >= 0.95)            
         locations_fld = list(zip(*locations_fld[::-1]))        
         #网络不好
-        if locations_fld:
-            log('运行超时，开始下一个账号.')
-            raise Exception("程序执行超时！")   
+        if locations_fld :
+            if not f:
+                retry_times+=1
+                if retry_times>=5:
+                    retry_times=0
+                    time.sleep(600)
+                    launch()
+            else:
+                return True
         if locations_con:
             wait_time = wait_times[i] 
 
@@ -219,6 +225,61 @@ def restart():
         sleep_with_random(20)
         
 
+def launch():
+        global ready_to_send
+        try:
+            restart()
+            while (not (match('maintain',0.8,True) or match('YUNA',0.95,True))) or match('stuck',0.95,True) or match('connect_break',0.95,True):
+                restart()
+                sleep_with_random(2)
+            if match('maintain',0.8,True):
+                log('====================维护中====================')
+                ready_to_send+='====================维护中====================\n'
+                end()
+                return
+
+            while match('YUNA',0.95,True):
+                if match('update',0.9,True):
+                    match('update',0.9,False)
+                    print('发现并执行游戏更新！')
+                    sleep_with_random(2)
+                if application=='china':
+                    if match('launch_activity_close',0.7,True):
+                        match('launch_activity_close',0.7,False)
+                        sleep_with_random(2)
+                elif application=='google':
+                    if match('app_update',0.9,True):
+                        log('发现游戏更新')
+                        update()  
+                    if match('login',0.95,True):
+                        log('====================登录失败！请检查账号登录情况与网络环境！====================')
+                        ready_to_send+='====================登录失败！请检查账号登录情况与网络环境！====================\n'
+                        raise Exception('登录失败！')
+                match('YUNA',0.95,False)
+                sleep_with_random(5)
+            sleep_with_random(30)
+
+        except Exception as e:
+            # 发生异常时记录日志
+            print(f'运行账号{account_num}时程序启动异常：{e}')
+            log_file.write(f'{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())} 运行账号{account_num}时程序启动异常：{e}\n')
+            return
+        
+        try:
+            Customization()
+            #match('mystery',0.9,True)
+            #loop('knight_stone',0.97,5) 
+            #community()
+        except Exception as e:
+            # 发生异常时记录日志
+            print(f'运行账号{account_num}时程序运行异常：{e}')
+            log_file.write(f'{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())} 运行账号{account_num}时程序运行异常：{e}\n')
+            end()
+            return
+
+
+
+
 
 
 
@@ -237,7 +298,7 @@ def restart():
 
 #-----------------daily-----------------#每日首次进入，关闭顺序：官方提示、重新派遣、友情点数获取、每日签到、加成效果提示、礼包促销提示，最后领取大厅内宠物礼物
 def daily():   
-    global ready_to_send
+    global ready_to_send,buff
     ready_to_send += '----------开始每日奖励收取----------\n'                           
     loop('ads',0.9,5)
     loop('confirm_blue',0.8,15)
@@ -249,10 +310,13 @@ def daily():
     loop('tap_to_close_yellow',0.8,8)
     loop('dispatch_restart',0.8,8)
     loop('tap_to_close_yellow',0.8,8)
+    if match('buff_crusade',0.8,True):
+        buff=True
     loop('tap_to_close_white',0.8,8)
-    match('announcement',0.8,False)
-    sleep_with_random(2)
-    loop('confirm_blue',0.8,2)
+    if match('announcement',0.8,True):
+        match('announcement',0.8,False)
+        sleep_with_random(2)
+        loop('confirm_blue',0.8,2)
     loop('buying_close',0.8,8)
     loop('gift_from_pets',0.8,8)
     device.shell('input tap 525 715')
@@ -508,6 +572,7 @@ def fight():
         rt(4)
         rt(2)
 
+    swipe(1300,700,1300,100,3)
     if match('temple',0.99,True):
         match('temple',0.99,False)
         match('temple',0.99,False)
@@ -536,7 +601,10 @@ def fight():
 
 #----------------crusade----------------#讨伐，请提前选择好宠物的重复战斗次数
 def crusade():
-    global ready_to_send
+    global ready_to_send,buff
+    if not buff:
+        return
+    
     ready_to_send += '----------开始讨伐----------\n'
     loop('menu_launch',0.8,2)
     loop('fight',0.8,3)
@@ -801,11 +869,12 @@ def activity():
             device.shell('input tap 655 645')
             sleep_with_random(2)
         
+        #8.14:4+1 光兰蒂(抛骰子);     9.1:8+1 伊杰拉建国礼(懒得做)        9.15:4+1 吸血鬼   10.6猜拳   11.21 原神姐大转盘
         x,y=match('activity_regular',0.8,True)                          
-        device.shell('input tap '+str(x)+' '+str(y+150))                 #8.14:4+1 光兰蒂;     9.1:8+1 伊杰拉建国礼(懒得做)        9.15:4+1 吸血鬼   10.6猜拳
+        device.shell('input tap '+str(x)+' '+str(y+150))                 
         sleep_with_random(30)  
         for i in range(4):
-            device.shell('input tap 465 660')
+            device.shell('input tap 450 545')
             sleep_with_random(8)
             device.shell('input tap 655 645')
             sleep_with_random(2)    
@@ -832,14 +901,15 @@ def activity():
             device.shell('input tap 640 635')
             sleep_with_random(2)
 
-        device.shell('input tap '+str(x)+' '+str(y+190))        #本期为吸血鬼转盘
+        #本期为木龙抛骰子
+        device.shell('input tap '+str(x)+' '+str(y+190))
         sleep_with_random(10) 
         for i in range(4):
-            device.shell('input tap 390 535')
+            device.shell('input tap 545 545')
             sleep_with_random(8)
             device.shell('input tap 640 635')
             sleep_with_random(2)    
-        device.shell('input tap 900 705')   
+        device.shell('input tap 1015 660')   
         sleep_with_random(5)
         device.shell('input tap 640 635')
         sleep_with_random(2) 
@@ -879,7 +949,7 @@ def activity():
             device.shell('input tap 635 660')
             sleep_with_random(2)
 
-        #光兰蒂（国）
+        #光兰蒂(抛骰子)（国）
         device.shell('input tap '+str(x)+' '+str(y+190))
         sleep_with_random(10) 
         for i in range(4):
@@ -928,16 +998,20 @@ def activity():
 
 #-----------------dttb-------------------#排除妨碍，消除危险
 def dttb():
-    global ready_to_send
+    global ready_to_send,buff
     ready_to_send += '----------排除妨碍中----------\n'
     sleep_with_random(10)
+    loop('cancel',0.8,8)
     loop('tap_to_close_yellow',0.8,8)
     loop('ads',0.9,5)
     loop('dispatch_restart',0.8,8)
+    if match('buff_crusade',0.8,True):
+        buff=True
     loop('tap_to_close_white',0.8,8)
-    match('announcement',0.8,False)
-    sleep_with_random(2)
-    loop('confirm_blue',0.8,2)
+    if match('announcement',0.8,True):
+        match('announcement',0.8,False)
+        sleep_with_random(2)
+        loop('confirm_blue',0.8,2)
     loop('tap_to_close_yellow',0.8,8)
     loop('buying_close',0.8,8)
     ready_to_send += '**********妨碍已排除**********\n'
@@ -1050,10 +1124,12 @@ try:
 
         application = accounts['application'] #读取对应程序
         package_name=APP[application]         #匹配相应包名
-        res_path+=('\\'+accounts['application'])
-        bookmark_time = int(accounts['bookmark_time']) #刷商店次数
+        res_path+=('\\'+accounts['application'])    #按包名确定图片路径
+        bookmark_time = int(accounts['bookmark_time'])  #刷商店次数
+        buff=False  #讨伐buff
 
-  
+
+        retry_times=0       #重连次数
         ttt=time.time()        #时间获取，为了召唤后命名文件和不同时间不同命令   
 
         bookmark_gettime=0
@@ -1067,56 +1143,10 @@ try:
         log('adb连接成功.')
 
 
-        
-        try:
-            restart()
-            while not (match('maintain',0.8,True) or match('YUNA',0.95,True)):
-                restart()
-                sleep_with_random(2)
-            if match('maintain',0.8,True):
-                log('====================维护中====================')
-                ready_to_send+='====================维护中====================\n'
-                end()
-                continue
 
-            while match('YUNA',0.95,True):
-                if match('update',0.9,True):
-                    match('update',0.9,False)
-                    print('发现并执行游戏更新！')
-                    sleep_with_random(2)
-                if application=='china':
-                    if match('launch_activity_close',0.7,True):
-                        match('launch_activity_close',0.7,False)
-                        sleep_with_random(2)
-                elif application=='google':
-                    if match('app_update',0.9,True):
-                        log('发现游戏更新')
-                        update()  
-                    if match('login',0.95,True):
-                        log('====================登录失败！请检查账号登录情况与网络环境！====================')
-                        ready_to_send+='====================登录失败！请检查账号登录情况与网络环境！====================\n'
-                        raise Exception('登录失败！')
-                match('YUNA',0.95,False)
-                sleep_with_random(5)
-            sleep_with_random(30)
+        launch()
 
-        except Exception as e:
-            # 发生异常时记录日志
-            print(f'运行账号{account_num}时程序启动异常：{e}')
-            log_file.write(f'{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())} 运行账号{account_num}时程序启动异常：{e}\n')
-            continue
-        
-        try:
-            Customization()
-            #match('mystery',0.9,True)
-            #loop('knight_stone',0.97,5) 
-            #community()
-        except Exception as e:
-            # 发生异常时记录日志
-            print(f'运行账号{account_num}时程序运行异常：{e}')
-            log_file.write(f'{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())} 运行账号{account_num}时程序运行异常：{e}\n')
-            end()
-            continue
+
 
 except Exception as e:
     # 发生异常时记录日志
