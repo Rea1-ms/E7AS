@@ -126,6 +126,7 @@ def match(filename,threshold,f):
                 retry_times+=1
                 if retry_times>=5:
                     retry_times=0
+                    log('++++++++++++++++++++重启脚本++++++++++++++++++++')
                     time.sleep(600)
                     launch()
             else:
