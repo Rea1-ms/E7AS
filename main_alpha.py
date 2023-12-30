@@ -108,6 +108,7 @@ def match(filename,threshold,f):
         # 加载模板图像
         template_con = cv2.imread(res_path + '\\' + 'connect.png', cv2.IMREAD_GRAYSCALE)
         template_fld = cv2.imread(res_path + '\\' + 'connect_break.png', cv2.IMREAD_GRAYSCALE)
+        template_ter = cv2.imread(res_path + '\\' + 'time_error.png', cv2.IMREAD_GRAYSCALE)
         # 获取截图数据
         screenshot_data = asarray(device.screenshot())
         # 将截图数据转换为 OpenCV 图像对象
@@ -115,12 +116,19 @@ def match(filename,threshold,f):
         # 模板匹配   原谅我用字母N来匹配connect，因为这个最准确，即使我用ps把connect完全扣下来匹配情况还是很感人
         result_con = cv2.matchTemplate(screenshot, template_con, cv2.TM_CCOEFF_NORMED)
         result_fld = cv2.matchTemplate(screenshot, template_fld, cv2.TM_CCOEFF_NORMED)
+        result_ter = cv2.matchTemplate(screenshot, template_ter, cv2.TM_CCOEFF_NORMED)
         # 取出匹配结果中大于阈值的部分
         locations_con = np.where(result_con >= 0.95)            
         locations_con = list(zip(*locations_con[::-1]))
         locations_fld = np.where(result_fld >= 0.95)            
-        locations_fld = list(zip(*locations_fld[::-1]))        
+        locations_fld = list(zip(*locations_fld[::-1]))
+        locations_ter = np.where(result_ter >= 0.95)            
+        locations_ter = list(zip(*locations_ter[::-1]))          
         #网络不好
+        if locations_ter:
+            log('++++++++++++++++++++重启脚本++++++++++++++++++++')
+            time.sleep(60)
+            launch()
         if locations_fld :
             if not f:
                 retry_times+=1
@@ -129,6 +137,7 @@ def match(filename,threshold,f):
                     log('++++++++++++++++++++重启脚本++++++++++++++++++++')
                     time.sleep(600)
                     launch()
+                    break
             else:
                 return True
         if locations_con:
@@ -213,8 +222,11 @@ def update():
 
 def restart():
         global application
-
-        device.shell(f'am force-stop {package_name}')
+        apps=APP.values()
+        for i in apps:
+            device.shell(f'am force-stop {i}')
+            sleep_with_random(1)
+        
         #防止上一次运行异常影响本次运行
         sleep_with_random(5)
         #任务走菜单是为了识别精准（除圣域），防止因背景不一样而报错
@@ -228,6 +240,7 @@ def restart():
 
 def launch():
         global ready_to_send
+        ready_to_send+='++++++++++++++++++++正在启动E7++++++++++++++++++++'
         try:
             restart()
             while (not (match('maintain',0.8,True) or match('YUNA',0.95,True))) or match('stuck',0.95,True) or match('connect_break',0.95,True):
@@ -252,7 +265,7 @@ def launch():
                     if match('app_update',0.9,True):
                         log('发现游戏更新')
                         update()  
-                    if match('login',0.95,True):
+                    if match('login',0.9,True):
                         log('====================登录失败！请检查账号登录情况与网络环境！====================')
                         ready_to_send+='====================登录失败！请检查账号登录情况与网络环境！====================\n'
                         raise Exception('登录失败！')
@@ -870,19 +883,22 @@ def activity():
             device.shell('input tap 655 645')
             sleep_with_random(2)
         
-        #8.14:4+1 光兰蒂(抛骰子);     9.1:8+1 伊杰拉建国礼(懒得做)        9.15:4+1 吸血鬼   10.6猜拳   11.21 原神姐大转盘
         x,y=match('activity_regular',0.8,True)                          
         device.shell('input tap '+str(x)+' '+str(y+150))                 
         sleep_with_random(30)  
         for i in range(4):
-            device.shell('input tap 450 545')
+            device.shell(f'input tap {190+140*i} 425')
+            sleep_with_random(2)  
+            device.shell('input tap 515 700')
             sleep_with_random(8)
             device.shell('input tap 655 645')
             sleep_with_random(2)    
-        device.shell('input tap 975 700')   
+        device.shell('input tap 1050 700')   
         sleep_with_random(5)
         device.shell('input tap 655 645')
         sleep_with_random(2) 
+        #8.14:4+1 光兰蒂(抛骰子);     9.1:8+1 伊杰拉建国礼(懒得做)        9.15:4+1 吸血鬼   10.6猜拳   11.21 原神姐大转盘
+        #12.12 自行兑换 12.28 插画投票
         
 
     elif application=='china':
@@ -902,15 +918,15 @@ def activity():
             device.shell('input tap 640 635')
             sleep_with_random(2)
 
-        #本期为木龙抛骰子
+        #本期为大转盘
         device.shell('input tap '+str(x)+' '+str(y+190))
         sleep_with_random(10) 
         for i in range(4):
-            device.shell('input tap 545 545')
+            device.shell('input tap 360 535')
             sleep_with_random(8)
             device.shell('input tap 640 635')
             sleep_with_random(2)    
-        device.shell('input tap 1015 660')   
+        device.shell('input tap 930 710')   
         sleep_with_random(5)
         device.shell('input tap 640 635')
         sleep_with_random(2) 
@@ -928,7 +944,7 @@ def activity():
 
 
         ''' 
-        #超级大作战（国）
+        #超级大作战(国)
         for i in range(5):
             device.shell('input tap 1045 525')
             sleep_with_random(5)
@@ -950,7 +966,7 @@ def activity():
             device.shell('input tap 635 660')
             sleep_with_random(2)
 
-        #光兰蒂(抛骰子)（国）
+        #光兰蒂(抛骰子)(国)
         device.shell('input tap '+str(x)+' '+str(y+190))
         sleep_with_random(10) 
         for i in range(4):
@@ -963,9 +979,22 @@ def activity():
         device.shell('input tap 640 635')
         sleep_with_random(2) 
 
+        #大转盘(国)
+        device.shell('input tap '+str(x)+' '+str(y+190))
+        sleep_with_random(10) 
+        for i in range(4):
+            device.shell('input tap 360 535')
+            sleep_with_random(8)
+            device.shell('input tap 640 635')
+            sleep_with_random(2)    
+        device.shell('input tap 930 710')   
+        sleep_with_random(5)
+        device.shell('input tap 640 635')
+        sleep_with_random(2) 
 
 
-        #大转盘（外） 9.15 吸血鬼
+
+        #大转盘(外) 9.15 吸血鬼
         x,y=match('activity_regular',0.8,True)                          
         device.shell('input tap '+str(x)+' '+str(y+150))                 
         sleep_with_random(30)  
@@ -989,6 +1018,22 @@ def activity():
             device.shell('input tap 655 645')
             sleep_with_random(2)    
         device.shell('input tap 975 700')   
+        sleep_with_random(5)
+        device.shell('input tap 655 645')
+        sleep_with_random(2) 
+
+        #12.28(外)  插画投票
+        x,y=match('activity_regular',0.8,True)                          
+        device.shell('input tap '+str(x)+' '+str(y+150))                 
+        sleep_with_random(30)  
+        for i in range(4):
+            device.shell(f'input tap {190+140*i} 425')
+            sleep_with_random(2)  
+            device.shell('input tap 515 700')
+            sleep_with_random(8)
+            device.shell('input tap 655 645')
+            sleep_with_random(2)    
+        device.shell('input tap 1050 700')   
         sleep_with_random(5)
         device.shell('input tap 655 645')
         sleep_with_random(2) 
