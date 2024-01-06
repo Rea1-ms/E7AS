@@ -126,7 +126,7 @@ def match(filename,threshold,f):
         locations_ter = list(zip(*locations_ter[::-1]))          
         #网络不好
         if locations_ter:
-            log('++++++++++++++++++++重启脚本++++++++++++++++++++')
+            log('++++++++++++++++++++重启脚本++++++++++++++++++++\n')
             time.sleep(60)
             launch()
         if locations_fld :
@@ -134,7 +134,7 @@ def match(filename,threshold,f):
                 retry_times+=1
                 if retry_times>=5:
                     retry_times=0
-                    log('++++++++++++++++++++重启脚本++++++++++++++++++++')
+                    log('++++++++++++++++++++重启脚本++++++++++++++++++++\n')
                     time.sleep(600)
                     launch()
                     break
@@ -240,7 +240,7 @@ def restart():
 
 def launch():
         global ready_to_send
-        ready_to_send+='++++++++++++++++++++正在启动E7++++++++++++++++++++'
+        ready_to_send+='++++++++++++++++++++正在启动E7++++++++++++++++++++\n'
         try:
             restart()
             while (not (match('maintain',0.8,True) or match('YUNA',0.95,True))) or match('stuck',0.95,True) or match('connect_break',0.95,True):
@@ -918,17 +918,7 @@ def activity():
             device.shell('input tap 640 635')
             sleep_with_random(2)
 
-        #本期为大转盘
-        device.shell('input tap '+str(x)+' '+str(y+190))
-        sleep_with_random(10) 
-        for i in range(4):
-            device.shell('input tap 360 535')
-            sleep_with_random(8)
-            device.shell('input tap 640 635')
-            sleep_with_random(2)    
-        device.shell('input tap 930 710')   
-        sleep_with_random(5)
-        device.shell('input tap 640 635')
+        #本期为兑换所 自行兑换
         sleep_with_random(2) 
         
 
