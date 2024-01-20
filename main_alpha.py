@@ -178,6 +178,85 @@ def match(filename,threshold,f):
 
 
 
+
+
+def left_half_match(filename,threshold,f):       
+    global res_path      
+    filename+='.png'
+    if time.time()  - ttt > 7200 :
+        log('运行超时，开始下一个账号.')
+        raise Exception("程序执行超时！")
+        # 输出日志
+    log(f'查找 {filename} ...')
+        # 获取截图数据
+    screenshot_data = asarray(device.screenshot())
+        #裁剪成一半
+    screenshot = screenshot_data[:, :screenshot_data.shape[1]//2]
+        # 将截图数据转换为 OpenCV 图像对象
+    screenshot = cv2.cvtColor(screenshot_data, cv2.COLOR_BGR2GRAY)
+        
+        # 如果正常匹配
+    template = cv2.imread(res_path + '\\' + filename, cv2.IMREAD_GRAYSCALE)
+    result = cv2.matchTemplate(screenshot, template, cv2.TM_CCOEFF_NORMED)
+    locations = np.where(result >= threshold)
+    locations = list(zip(*locations[::-1]))
+    if locations:
+        log(f'找到{filename}.')
+    # 取出第一个匹配结果的中心坐标
+        (x, y) = (int(locations[0][0] + 0.5 * template.shape[1]), int(locations[0][1] + 0.5 * template.shape[0]))
+            
+        if f==True:
+            return x,y            
+        log(f'找到目标！中心坐标: ({x}, {y})')
+        #执行点击
+        device.shell('input tap '+str(x)+' '+str(y))
+        log(f'点击目标{filename}完成')
+            
+        
+    else:
+        log(f'未找到{filename}.')
+        return False
+    
+
+def right_half_match(filename,threshold,f):       
+    global res_path      
+    filename+='.png'
+    if time.time()  - ttt > 7200 :
+        log('运行超时，开始下一个账号.')
+        raise Exception("程序执行超时！")
+        # 输出日志
+    log(f'查找 {filename} ...')
+        # 获取截图数据
+    screenshot_data = asarray(device.screenshot())
+        #裁剪成一半
+    screenshot = screenshot_data[:, screenshot_data.shape[1]//2:]
+        # 将截图数据转换为 OpenCV 图像对象
+    screenshot = cv2.cvtColor(screenshot_data, cv2.COLOR_BGR2GRAY)
+        
+        # 如果正常匹配
+    template = cv2.imread(res_path + '\\' + filename, cv2.IMREAD_GRAYSCALE)
+    result = cv2.matchTemplate(screenshot, template, cv2.TM_CCOEFF_NORMED)
+    locations = np.where(result >= threshold)
+    locations = list(zip(*locations[::-1]))
+    if locations:
+        log(f'找到{filename}.')
+    # 取出第一个匹配结果的中心坐标
+        (x, y) = (int(locations[0][0] + 0.5 * template.shape[1]), int(locations[0][1] + 0.5 * template.shape[0]))
+            
+        if f==True:
+            return x,y            
+        log(f'找到目标！中心坐标: ({x}, {y})')
+        #执行点击
+        device.shell('input tap '+str(x)+' '+str(y))
+        log(f'点击目标{filename}完成')
+            
+        
+    else:
+        log(f'未找到{filename}.')
+        return False
+
+
+
 def loop(a,b,c):                 #如果在页面上存在，就一直点。
     while True:                  #优势：防xm部分按钮做虚按处理；劣势：对匹配精度配置要求高（放心大部分场景已测试通过）
         if match(a,b,True):
@@ -327,8 +406,8 @@ def daily():
     if match('buff_crusade',0.8,True):
         buff=True
     loop('tap_to_close_white',0.8,8)
-    if match('announcement',0.8,True):
-        match('announcement',0.8,False)
+    if left_half_match('announcement',0.8,True):
+        left_half_match('announcement',0.8,False)
         sleep_with_random(2)
         loop('confirm_blue',0.8,2)
     loop('buying_close',0.8,8)
@@ -337,7 +416,7 @@ def daily():
     sleep_with_random(5)
     device.shell('input tap 525 715')
     sleep_with_random(3)
-    ready_to_send += '**********每日奖励收取完成**********\n'
+    ready_to_send += '**********每日奖励收取完成**********\n' 
 #----------------calling-----------------#每日穷尽免费次数
 def calling():
     global ready_to_send 
@@ -1038,12 +1117,15 @@ def dttb():
     loop('cancel',0.8,8)
     loop('tap_to_close_yellow',0.8,8)
     loop('ads',0.9,5)
+    if right_half_match('announcement',0.8,True):
+        device.shell('input tap 100 100')
+        sleep_with_random(2)
     loop('dispatch_restart',0.8,8)
     if match('buff_crusade',0.8,True):
         buff=True
     loop('tap_to_close_white',0.8,8)
-    if match('announcement',0.8,True):
-        match('announcement',0.8,False)
+    if left_half_match('announcement',0.8,True):
+        left_half_match('announcement',0.8,False)
         sleep_with_random(2)
         loop('confirm_blue',0.8,2)
     loop('tap_to_close_yellow',0.8,8)
