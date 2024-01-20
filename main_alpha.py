@@ -887,18 +887,16 @@ def activity():
         device.shell('input tap '+str(x)+' '+str(y+150))                 
         sleep_with_random(30)  
         for i in range(4):
-            device.shell(f'input tap {190+140*i} 425')
-            sleep_with_random(2)  
-            device.shell('input tap 515 700')
+            device.shell('input tap 450 545')
             sleep_with_random(8)
             device.shell('input tap 655 645')
             sleep_with_random(2)    
-        device.shell('input tap 1050 700')   
+        device.shell('input tap 975 700')   
         sleep_with_random(5)
         device.shell('input tap 655 645')
         sleep_with_random(2) 
         #8.14:4+1 光兰蒂(抛骰子);     9.1:8+1 伊杰拉建国礼(懒得做)        9.15:4+1 吸血鬼   10.6猜拳   11.21 原神姐大转盘
-        #12.12 自行兑换 12.28 插画投票
+        #12.12 自行兑换 12.28 插画投票  1.20 月兔转盘
         
 
     elif application=='china':
@@ -984,7 +982,7 @@ def activity():
 
 
 
-        #大转盘(外) 9.15 吸血鬼
+        #大转盘(外) 9.15 吸血鬼 
         x,y=match('activity_regular',0.8,True)                          
         device.shell('input tap '+str(x)+' '+str(y+150))                 
         sleep_with_random(30)  
