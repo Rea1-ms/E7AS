@@ -32,11 +32,11 @@
 2. 进入文件夹，空白处选择“在终端中打开”
 3. 输入以下命令并回车，等待依赖安装完成
 
-  `pip install -r requirements.txt`
+    `pip install -r requirements.txt`
 
 4. 修改模拟器分辨率为1600*900，打开usb调试并填写config.json
 5. 输入以下命令并回车即可启动
 
-  `python main_alpha.py`
+    `python main_alpha.py`
 
 定时任务的配置不再赘述
