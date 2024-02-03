@@ -11,7 +11,7 @@ from notify import send
 
 
 
-def Customization():
+def Customization():                                #任务列表
     if 4<=hour<=7:
         
         daily()
@@ -90,11 +90,10 @@ def Customization():
         end()
 
 #---------------------------BASIC-FUNCTIONS----------------------------------#以下为基础功能模块
-def sleep_with_random(a):
+def sleep_with_random(a):                           #随机暂停模块
     time.sleep(a * (1 + random.uniform(0, 0.25)))
 
-#主要匹配模块
-def match(filename,threshold,f):       
+def match(filename,threshold,f):                    #主要匹配模块
     global res_path,retry_times       
     filename+='.png'
     if time.time()  - ttt > 7200 :
@@ -176,11 +175,7 @@ def match(filename,threshold,f):
             log(f'未找到{filename}.')
             return False
 
-
-
-
-
-def left_half_match(filename,threshold,f):       
+def left_half_match(filename,threshold,f):          #左半边匹配
     global res_path      
     filename+='.png'
     if time.time()  - ttt > 7200 :
@@ -217,8 +212,7 @@ def left_half_match(filename,threshold,f):
         log(f'未找到{filename}.')
         return False
     
-
-def right_half_match(filename,threshold,f):       
+def right_half_match(filename,threshold,f):         #右半边匹配
     global res_path      
     filename+='.png'
     if time.time()  - ttt > 7200 :
@@ -257,7 +251,7 @@ def right_half_match(filename,threshold,f):
 
 
 
-def loop(a,b,c):                 #如果在页面上存在，就一直点。
+def loop(a,b,c):                                    #如果在页面上存在，就一直点。
     while True:                  #优势：防xm部分按钮做虚按处理；劣势：对匹配精度配置要求高（放心大部分场景已测试通过）
         if match(a,b,True):
             match(a,b,False)
@@ -266,13 +260,11 @@ def loop(a,b,c):                 #如果在页面上存在，就一直点。
             sleep_with_random(0.5)#给个缓冲机会
             break
 
-        
-
-def swipe(start_x, start_y, end_x, end_y,t):       #滑动模块
+def swipe(start_x, start_y, end_x, end_y,t):        #滑动模块
     device.shell('input swipe {} {} {} {} 250'.format(start_x, start_y, end_x, end_y))
     sleep_with_random(t)
 
-def rt(a):                                         #返回模块
+def rt(a):                                          #返回模块
     device.shell('input keyevent 4')
     print('返回，暂停{}s'.format(a))
     sleep_with_random(a)
@@ -282,11 +274,11 @@ def end():                                          #结束，强行停止游戏
     log('运行完成，开始下一个账号')
     device.shell(f'am force-stop {package_name}')
 
-def log(msg):                                        #日志记录模块
+def log(msg):                                       #日志记录模块
     log_file.write(f'{time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime())} {msg}\n')
     print(msg)
 
-def update():
+def update():                                       #针对国际服的游戏自动更新模块(自备科学上网环境)
     match('app_update',0.9,False)
     sleep_with_random(10)
     if match('app_update_play',0.9,True):
@@ -299,7 +291,7 @@ def update():
     else:
         raise Exception("程序更新失败！")
 
-def restart():
+def restart():                                      #重启脚本模块
         global application
         apps=APP.values()
         for i in apps:
@@ -316,8 +308,7 @@ def restart():
             match('app_icon',0.9,False)
         sleep_with_random(20)
         
-
-def launch():
+def launch():                                       #启动/准备模块
         global ready_to_send
         ready_to_send+='++++++++++++++++++++正在启动E7++++++++++++++++++++\n'
         try:
@@ -406,8 +397,8 @@ def daily():
     if match('buff_crusade',0.8,True):
         buff=True
     loop('tap_to_close_white',0.8,8)
-    if left_half_match('announcement',0.8,True):
-        left_half_match('announcement',0.8,False)
+    if left_half_match('announcement',0.9,True):
+        left_half_match('announcement',0.9,False)
         sleep_with_random(2)
         loop('confirm_blue',0.8,2)
     loop('buying_close',0.8,8)
@@ -417,6 +408,7 @@ def daily():
     device.shell('input tap 525 715')
     sleep_with_random(3)
     ready_to_send += '**********每日奖励收取完成**********\n' 
+
 #----------------calling-----------------#每日穷尽免费次数
 def calling():
     global ready_to_send 
@@ -497,7 +489,8 @@ def olbs():
     rt(2)
     rt(4)
     ready_to_send +='**********收菜完成**********\n'
-#-----------------pets-------------------##穷尽每日抽取次数，照顾宠物暂无头绪
+
+#-----------------pets-------------------#穷尽每日抽取次数，照顾宠物暂无头绪
 def pets():
     global ready_to_send 
     ready_to_send += '----------开始抽宠物----------\n'
@@ -561,6 +554,7 @@ def knights():
 
     rt(4)
     ready_to_send += '**********骑士团奖励收取完成**********\n'
+
 #-----------------pvp-------------------#打人机，暂不支持选择人机难度，打默认而已
 def pvp():
     global ready_to_send
@@ -611,7 +605,6 @@ def pvp():
                 swipe(1000,700,1000,200,2)
     rt(4)
     ready_to_send += '**********打pvp人机完成**********\n'
-
 
 #----------------fight-----------------#深渊+祭坛+殿堂
 def fight():
@@ -845,8 +838,6 @@ def bookmark_enhanced():
     else:
         log('----------本轮未找到----------\n')
 
-
-
 #------------dailytasks---------------#若点数未100则去打支线故事（暂不支持每周奖励领取）
 def daliytasks():
     global ready_to_send
@@ -975,9 +966,10 @@ def activity():
         device.shell('input tap 655 645')
         sleep_with_random(2) 
         #8.14:4+1 光兰蒂(抛骰子);     9.1:8+1 伊杰拉建国礼(懒得做)        9.15:4+1 吸血鬼   10.6猜拳   11.21 原神姐大转盘
-        #12.12 自行兑换 12.28 插画投票  1.20 月兔转盘
+        #12.12 自行兑换 12.28 插画投票  24.1.20 月兔转盘
         
 
+    #24.1.27 国服更新了网页活动UI 我觉得是依托史 (虽然我不会做UI(笑))
     elif application=='china':
         while True:
             if not match('activity_regular',0.8,True) :
@@ -990,12 +982,23 @@ def activity():
         sleep_with_random(10) 
 
         for i in range(4):
-            device.shell(f'input tap {395+i*240} 575')
+            device.shell(f'input tap {395+i*240} 685')
             sleep_with_random(5)
             device.shell('input tap 640 635')
             sleep_with_random(2)
 
-        #本期为兑换所 自行兑换
+        device.shell('input tap '+str(x)+' '+str(y+190))
+        sleep_with_random(10) 
+        for i in range(4):
+            device.shell('input tap 655 650')
+            sleep_with_random(8)
+            device.shell('input tap 640 635')
+            sleep_with_random(2)    
+        device.shell('input tap 640 1010')   
+        sleep_with_random(5)
+        device.shell('input tap 640 635')
+        sleep_with_random(2) 
+        
         sleep_with_random(2) 
         
 
@@ -1124,14 +1127,18 @@ def dttb():
     if match('buff_crusade',0.8,True):
         buff=True
     loop('tap_to_close_white',0.8,8)
-    if left_half_match('announcement',0.8,True):
-        left_half_match('announcement',0.8,False)
+    if left_half_match('announcement',0.9,True):
+        left_half_match('announcement',0.9,False)
         sleep_with_random(2)
         loop('confirm_blue',0.8,2)
     loop('tap_to_close_yellow',0.8,8)
     loop('buying_close',0.8,8)
+    match('buff_plus',0.8,True)
+    sleep_with_random(5)
+    if match('buff_crusade',0.8,True):
+        buff=True
+        rt(2)
     ready_to_send += '**********妨碍已排除**********\n'
-
 
 #-------------community------------------#国服社区奖励
 def community():    
@@ -1160,7 +1167,6 @@ def community():
                 swipe(450,800,450,100,2)
         rt(3)
         rt(3)
-
 
 #---------------transfer------------------#传送2星杂鱼（危险！慎用！使用前请先将有用英雄锁定以防被传送！把6星传走作者概不负责！使用即同意您已知晓使用本脚本的风险并对使用本脚本所带来的所有后果承担全部责任）
 def transfer():
@@ -1261,7 +1267,7 @@ try:
 
 
         launch()
-
+        
 
 
 except Exception as e:
